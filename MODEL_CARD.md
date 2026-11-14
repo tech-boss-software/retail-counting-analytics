@@ -1,6 +1,6 @@
 # System card: retail counting analytics
 
-**Project owner:** Tech Boss. **Components:** one detector (fine-tuned by Tech Boss with detector-training-pipeline; alternatively the unchanged official TorchVision COCO person detector for flow mode), a pure-Python tracker, line counter, zone occupancy, floor homography and shelf audit written by Tech Boss, and CSV/SQLite/HTML reporting. **Inputs used for the numbers below:** drawn shelf photos and a drawn entrance clip, not photographs or CCTV.
+**Project owner:** Tech Boss. **Components:** one detector (fine-tuned by Tech Boss with detector-training-pipeline; alternatively the unchanged official TorchVision COCO person detector for flow mode), a pure-Python tracker, line counter, zone occupancy, floor homography and shelf audit written by Tech Boss, and CSV/SQLite/HTML reporting. **Inputs used for the numbers below:** drawn shelf photos and a drawn entrance clip for the trained detector; five real Pexels shelf photos and one hand-held mall clip for the checks with the official COCO detector.
 
 ## Intended use
 
@@ -39,6 +39,17 @@ All 37 slots the logic-only run misses are at the right end of a row, where noth
 | out | 3 | 3 | 0 | 0 | 6 frames | 7 frames |
 
 Net count error 0; the occupancy curve (in minus out) matches the truth on 94% of frames, the rest being the hysteresis delay of under a second after each crossing. The two decoys produced no count. The promo zone (5 m²) was occupied 66% of the time with a peak of one person, as scripted. The tracker opened 12 identities for 10 walkers: two re-identifications after a walker left and re-entered the view, none of them at the gate, so no double count. Per-bucket totals are in `examples/flow/totals.csv`. The 320-px detector gave the same 7/7 result on this clip (people are 57 to 150 px tall here); the committed run uses the 512-px model so both modes share one file. Median detector time 70 ms and 74 ms per frame end to end (detect, track, count, overlay, encode) on 4 threads; 46 s for the 60-second clip.
+
+## Real shelf photos with the untrained COCO bottle class
+
+Five Pexels photos of drink shelves (sources in `examples/FOOTAGE_SOURCES.md`) were audited with `torchvision-coco:bottle:product`, the official COCO Faster R-CNN keeping only its `bottle` category, so no training on drawings is involved. Two photos were hand counted row by row (`examples/shelf-real/hand_counts.json`); none of their rows has a gap wide enough for a bottle, so the true number of empty slots is 0.
+
+| Resize | Bottles found | Rows exact | Count MAE per row | False empty slots | Median detector time |
+|---|---|---|---|---|---|
+| 1024 px (used) | 101 of 128 | 1 of 7 | 3.9 | 27 | 833 ms |
+| 640 px | 68 of 128 | 0 of 7 | 8.6 | 50 | 511 ms |
+
+The row logic behaved: rows were separated correctly on every photo and the one fully detected row (16 of 16) produced no false slot. The misses are the detector's: dark or clear bottles against a dark back wall, white bottles in a bright reflection, shrink-wrapped packs and cans (not bottles to COCO), and an angled row of bleach bottles with 0 detections at either size. Each missed bottle becomes a false empty slot, because the audit cannot tell a gap from a miss; that is the argument for a detector trained on the client's own photos (`--image-size` chosen from the measured product width) rather than a general-purpose one. The annotated photos are in `examples/shelf-real/annotated/`.
 
 ## Real footage: a mall walkway (Pexels 1338594)
 

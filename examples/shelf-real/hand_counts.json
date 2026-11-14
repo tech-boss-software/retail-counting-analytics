@@ -1,0 +1,161 @@
+{
+  "method": "Counted by eye on row crops of the annotated 1024-px run; a bottle counts when its front is at least half visible inside the audited extent. No row had a gap wide enough for a bottle, so true empty slots are 0.",
+  "photos": {
+    "shelf_pexels_14411720.jpg": {
+      "title": "Turkish soda wall, five single-file rows",
+      "rows": [
+        18,
+        17,
+        16,
+        17,
+        16
+      ],
+      "empty_slots": 0,
+      "note": "Bottles whose front is at least half visible inside the audited extent; the bottle cut by the left image edge is not counted."
+    },
+    "shelf_pexels_7451937.jpg": {
+      "title": "Supermarket iced-tea shelf, three rows",
+      "rows": [
+        null,
+        22,
+        22
+      ],
+      "empty_slots": 0,
+      "note": "Row 1 is shrink-wrapped six-packs and cans with no per-unit truth; rows 2 and 3 count loose bottles, including the Sola and Oishi bottles the detector missed."
+    }
+  },
+  "scores": {
+    "1024": {
+      "rows": [
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 1,
+          "truth_items": 18,
+          "detected": 12,
+          "reported_empty_slots": 7,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 2,
+          "truth_items": 17,
+          "detected": 12,
+          "reported_empty_slots": 5,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 3,
+          "truth_items": 16,
+          "detected": 15,
+          "reported_empty_slots": 1,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 4,
+          "truth_items": 17,
+          "detected": 13,
+          "reported_empty_slots": 4,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 5,
+          "truth_items": 16,
+          "detected": 16,
+          "reported_empty_slots": 0,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_7451937.jpg",
+          "row": 2,
+          "truth_items": 22,
+          "detected": 18,
+          "reported_empty_slots": 4,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_7451937.jpg",
+          "row": 3,
+          "truth_items": 22,
+          "detected": 15,
+          "reported_empty_slots": 6,
+          "true_empty_slots": 0
+        }
+      ],
+      "truth_items": 128,
+      "detected": 101,
+      "false_empty_slots": 27,
+      "rows_exact": 1,
+      "count_mae": 3.857142857142857,
+      "detector_median_ms": 832.6149999993504
+    },
+    "640": {
+      "rows": [
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 1,
+          "truth_items": 18,
+          "detected": 6,
+          "reported_empty_slots": 13,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 2,
+          "truth_items": 17,
+          "detected": 15,
+          "reported_empty_slots": 2,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 3,
+          "truth_items": 16,
+          "detected": 12,
+          "reported_empty_slots": 3,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 4,
+          "truth_items": 17,
+          "detected": 12,
+          "reported_empty_slots": 4,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_14411720.jpg",
+          "row": 5,
+          "truth_items": 16,
+          "detected": 14,
+          "reported_empty_slots": 2,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_7451937.jpg",
+          "row": 2,
+          "truth_items": 22,
+          "detected": 6,
+          "reported_empty_slots": 10,
+          "true_empty_slots": 0
+        },
+        {
+          "image": "shelf_pexels_7451937.jpg",
+          "row": 3,
+          "truth_items": 22,
+          "detected": 3,
+          "reported_empty_slots": 16,
+          "true_empty_slots": 0
+        }
+      ],
+      "truth_items": 128,
+      "detected": 68,
+      "false_empty_slots": 50,
+      "rows_exact": 0,
+      "count_mae": 8.571428571428571,
+      "detector_median_ms": 511.1092000006465
+    }
+  }
+}

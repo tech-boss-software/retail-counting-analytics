@@ -7,7 +7,7 @@
 
 Runs on-premise with no cloud account; the only model input is an ONNX file.
 
-**Measured on synthetic fixtures, with one real-footage check.** Shelf photos and the entrance clip are drawn by `synthetic.py` so that every product, empty slot, floor position and gate crossing is known exactly and the numbers can be scored. A hand-held mall clip (Pexels, free licence) was counted with the official COCO person detector to show the pipeline on real video and what the hysteresis and ignore-zone guards do; the model card reports it with its caveats. Public shelf datasets such as SKU-110K carry research-only licences and were not used, so shelf mode has no real-photo number yet.
+**Measured on synthetic fixtures, with one real-footage check.** Shelf photos and the entrance clip are drawn by `synthetic.py` so that every product, empty slot, floor position and gate crossing is known exactly and the numbers can be scored. A hand-held mall clip (Pexels, free licence) was counted with the official COCO person detector to show the pipeline on real video and what the hysteresis and ignore-zone guards do; the model card reports it with its caveats. Five real drink-shelf photos (Pexels) were audited with the official COCO bottle class and hand counted: 101 of 128 bottles found and every miss reported as a false empty slot, which is why a client's shelf needs a detector trained on its own photos. Public shelf datasets such as SKU-110K carry research-only licences and were not used.
 
 ## Quick start
 
@@ -39,6 +39,12 @@ python count_flow.py --input mall_rush_pexels_1338594.mp4 --config config/mall_p
 
 `config/mall_pexels_1338594.json` is a pixel-space config with a 40 px hysteresis and an `ignore_zones` polygon over a mirrored pillar; the run is in `examples/flow-real/`.
 
+```sh
+python audit_shelf.py --input shelf-photos/ --detector torchvision-coco:bottle:product:1024 --output artifacts/shelf-real
+```
+
+`torchvision-coco:<categories>:<class>[:min_size]` keeps any COCO categories of the official Faster R-CNN under one class name, so bottle shelves can be audited without training; the run on five Pexels shelf photos with hand counts is in `examples/shelf-real/`.
+
 ## Your photos, your cameras
 
 ```sh
@@ -47,7 +53,7 @@ python count_flow.py --input entrance.mp4 --config my-store.json --detector onnx
 python count_flow.py --input entrance.mp4 --config my-store.json --detector torchvision-person --output out/flow
 ```
 
-**Shelf mode** needs a detector with a `product` class. Rows are found by clustering box bottoms (products stand on the shelf), and inside a row a gap wider than `--min-gap-ratio` (0.8) times the row's median product width is an empty slot; a gap that would hold several products is reported as several slots. `--extent left,right` fixes the shelf edges in pixels for a fixed camera; by default the span of detected products is used, which cannot see an empty slot at a row end unless another row reaches there.
+**Shelf mode** needs a detector with a `product` class (an ONNX model, or `torchvision-coco:bottle:product` for bottle shelves). Rows are found by clustering box bottoms (products stand on the shelf), and inside a row a gap wider than `--min-gap-ratio` (0.8) times the row's median product width is an empty slot; a gap that would hold several products is reported as several slots. `--extent left,right` fixes the shelf edges in pixels for a fixed camera; by default the span of detected products is used, which cannot see an empty slot at a row end unless another row reaches there.
 
 **Flow mode** needs a detector with a `person` class: an ONNX model from detector-training-pipeline, `torchvision-person` (the official COCO SSDLite320 MobileNetV3, fast) or `torchvision-person-frcnn[:size]` (the official COCO Faster R-CNN MobileNetV3 with an adjustable resize, better for small or distant people); neither needs training on real footage. The config JSON holds:
 
@@ -77,6 +83,8 @@ Geometry, homography, counting, shelf logic, synthetic truth and the stores are 
 `examples/` holds the outputs of the actual local run described in `DATA_SOURCES.md`: the shelf dashboard and report over 40 held-out shelves with `evaluation.json`, the flow dashboard with `totals.csv`, `crossings.json`, `evaluation.json`, `run.json`, snapshots and the annotated clip, and the detector's training log, evaluation and export parity under `examples/model/`. [MODEL_CARD.md](MODEL_CARD.md) states what was measured and what was not. The same audit with a detector trained at the default 320-px input is kept in `examples/shelf-320px/evaluation.json`: products under about 35 px wide were missed and reported as empty slots (count MAE 2.0, slot precision 0.62 against 0.08 and 0.99 at 512 px), so `--image-size 512` is part of the recipe, not an optimisation.
 
 ![Shelf audit: boxes, per-row counts and hatched empty slots](examples/shelf/annotated/shelf_003.png)
+
+![Real shelf photo audited with the COCO bottle class: found bottles in green, misses reported as hatched empty slots](examples/shelf-real/annotated/shelf_pexels_14411720.jpg)
 
 ![Entrance frame with the gate line, zone and tracked people](examples/flow/frame_0290.png)
 

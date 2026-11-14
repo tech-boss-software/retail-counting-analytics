@@ -4,8 +4,13 @@
   run with ONNX Runtime only. For this project: classes person and product.
 - torchvision-person: the official COCO-pretrained SSDLite320 MobileNetV3 from
   TorchVision, keeping only the person class. It needs no training and serves the
-  people-counting mode on real footage; it has no product class, so shelf mode
-  requires an ONNX model.
+  people-counting mode on real footage.
+- torchvision-person-frcnn[:min_size]: the official COCO Faster R-CNN MobileNetV3
+  with an adjustable resize, better for small or distant people.
+- torchvision-coco:<categories>:<class>[:min_size]: the same Faster R-CNN keeping any
+  COCO categories under one name, e.g. torchvision-coco:bottle:product:1024 lets the
+  shelf audit count bottles on real photos without training. Products that are not
+  a COCO category still need an ONNX model trained on the client's photos.
 """
 from __future__ import annotations
 
@@ -93,14 +98,17 @@ class TorchvisionPersonDetector:
                 "classes": self.labels, "torchvision": torchvision.__version__}
 
 
-class TorchvisionPersonFRCNN(TorchvisionPersonDetector):
-    """The official COCO Faster R-CNN MobileNetV3-Large 320 FPN, people only, with an adjustable internal resize.
+class TorchvisionCocoDetector(TorchvisionPersonDetector):
+    """The official COCO Faster R-CNN MobileNetV3-Large 320 FPN with an adjustable internal resize,
+    keeping one or more COCO categories and exposing them under one class name.
 
-    Slower than SSDLite but it keeps small, distant people (players on a pitch at 720p) that the
-    320-px SSDLite loses; `min_size` is the shorter side after the internal resize.
+    `torchvision-person-frcnn[:size]` keeps `person`; `torchvision-coco:bottle+cup:product[:size]`
+    keeps bottles and cups and calls them `product`, which lets the shelf audit run on real
+    photos of drink shelves without any training. `min_size` is the shorter side after the
+    internal resize; 320 is the checkpoint default, larger keeps small objects.
     """
 
-    def __init__(self, threads=4, cache_dir=None, score_threshold=0.05, min_size=640):
+    def __init__(self, threads=4, cache_dir=None, score_threshold=0.05, min_size=640, categories=("person",), label="person", backend="torchvision-person-frcnn"):
         if cache_dir:
             os.environ["TORCH_HOME"] = str(Path(cache_dir).resolve())
         import torch
@@ -112,16 +120,44 @@ class TorchvisionPersonFRCNN(TorchvisionPersonDetector):
         self.model = torchvision.models.detection.fasterrcnn_mobilenet_v3_large_320_fpn(weights=self.weights).eval()
         self.model.transform.min_size = (int(min_size),)
         self.model.transform.max_size = int(min_size) * 2
-        self.person_index = self.weights.meta["categories"].index("person")
-        self.labels = {0: "person"}
+        names = self.weights.meta["categories"]
+        unknown = [c for c in categories if c not in names]
+        if unknown:
+            raise ValueError(f"not COCO categories: {unknown}")
+        self.kept = {names.index(c) for c in categories}
+        self.categories = list(categories)
+        self.backend = backend
+        self.labels = {0: label}
         self.score_threshold = score_threshold
         self.torch = torch
+
+    def detect(self, image):
+        import numpy as np
+
+        tensor = self.torch.from_numpy(np.asarray(image.convert("RGB"), dtype=np.float32) / 255.0).permute(2, 0, 1).contiguous()
+        with self.torch.no_grad():
+            output = self.model([tensor])[0]
+        width, height = image.size
+        result = []
+        for box, label, score in zip(output["boxes"].tolist(), output["labels"].tolist(), output["scores"].tolist()):
+            if label not in self.kept or score < self.score_threshold:
+                continue
+            clipped = [max(0.0, min(width, box[0])), max(0.0, min(height, box[1])), max(0.0, min(width, box[2])), max(0.0, min(height, box[3]))]
+            if clipped[2] <= clipped[0] or clipped[3] <= clipped[1]:
+                continue
+            result.append({"box_xyxy": clipped, "score": float(score), "class_id": 0})
+        return result
 
     def info(self):
         import torchvision
 
-        return {"backend": "torchvision-person-frcnn", "weights": str(self.weights), "url": self.weights.url, "min_size": self.model.transform.min_size[0],
-                "classes": self.labels, "torchvision": torchvision.__version__}
+        return {"backend": self.backend, "weights": str(self.weights), "url": self.weights.url, "min_size": self.model.transform.min_size[0],
+                "coco_categories": self.categories, "classes": self.labels, "torchvision": torchvision.__version__}
+
+
+class TorchvisionPersonFRCNN(TorchvisionCocoDetector):
+    def __init__(self, threads=4, cache_dir=None, score_threshold=0.05, min_size=640):
+        super().__init__(threads, cache_dir, score_threshold, min_size, ("person",), "person", "torchvision-person-frcnn")
 
 
 def load_detector(spec, threads=4, cache_dir=None):
@@ -132,4 +168,10 @@ def load_detector(spec, threads=4, cache_dir=None):
     if spec.startswith("torchvision-person-frcnn"):
         size = int(spec.split(":", 1)[1]) if ":" in spec else 640
         return TorchvisionPersonFRCNN(threads, cache_dir, min_size=size)
-    raise ValueError("detector must be 'onnx:<model.onnx>', 'torchvision-person' or 'torchvision-person-frcnn[:min_size]'")
+    if spec.startswith("torchvision-coco:"):
+        parts = spec.split(":")
+        if len(parts) < 3:
+            raise ValueError("torchvision-coco needs '<coco categories joined by +>:<class name>[:min_size]'")
+        size = int(parts[3]) if len(parts) > 3 else 640
+        return TorchvisionCocoDetector(threads, cache_dir, min_size=size, categories=tuple(parts[1].split("+")), label=parts[2], backend="torchvision-coco")
+    raise ValueError("detector must be 'onnx:<model.onnx>', 'torchvision-person', 'torchvision-person-frcnn[:min_size]' or 'torchvision-coco:<categories>:<class>[:min_size]'")

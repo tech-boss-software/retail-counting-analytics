@@ -166,3 +166,13 @@ class TrackerCountingIntegrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DetectorSpecTests(unittest.TestCase):
+    def test_bad_specs_are_rejected_before_any_model_loads(self):
+        from detectors import load_detector
+
+        with self.assertRaises(ValueError):
+            load_detector("yolo:model.pt")
+        with self.assertRaises(ValueError):
+            load_detector("torchvision-coco:bottle")
