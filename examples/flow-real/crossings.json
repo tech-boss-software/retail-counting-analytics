@@ -1,0 +1,52 @@
+[
+  {
+    "frame": 24,
+    "track_id": 1,
+    "line": "walkway",
+    "direction": "out",
+    "point": [
+      1066.894,
+      846.308
+    ]
+  },
+  {
+    "frame": 46,
+    "track_id": 3,
+    "line": "walkway",
+    "direction": "out",
+    "point": [
+      1042.975,
+      573.778
+    ]
+  },
+  {
+    "frame": 71,
+    "track_id": 3,
+    "line": "walkway",
+    "direction": "in",
+    "point": [
+      917.788,
+      680.274
+    ]
+  },
+  {
+    "frame": 91,
+    "track_id": 35,
+    "line": "walkway",
+    "direction": "out",
+    "point": [
+      1042.589,
+      524.063
+    ]
+  },
+  {
+    "frame": 233,
+    "track_id": 56,
+    "line": "walkway",
+    "direction": "out",
+    "point": [
+      1040.437,
+      527.217
+    ]
+  }
+]

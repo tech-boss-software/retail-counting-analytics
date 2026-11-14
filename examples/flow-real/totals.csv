@@ -1,0 +1,3 @@
+bucket,start_time,start_seconds,end_seconds,in,out,occupancy_end
+0,,0.0,4.0,1,3,-2
+1,,4.0,8.0,0,1,-3

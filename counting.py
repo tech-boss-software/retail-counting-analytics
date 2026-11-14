@@ -23,6 +23,7 @@ DEFAULT_CONFIG = {
     "margin": 6.0,               # hysteresis distance in the chosen space's units
     "lines": [],
     "zones": [],
+    "ignore_zones": [],          # polygons (same space as lines) where tracks are dropped: mirrors, screens, staff areas
     "floor": None,
 }
 
@@ -50,7 +51,13 @@ def load_config(config):
             raise ValueError("every zone needs a unique name")
         zone_names.add(zone["name"])
         validate_polygon(zone["polygon"])
+    for zone in merged["ignore_zones"]:
+        validate_polygon(zone["polygon"])
     return merged
+
+
+def ignored(point, ignore_zones):
+    return any(point_in_polygon(point, zone["polygon"]) for zone in ignore_zones)
 
 
 class LineCounter:

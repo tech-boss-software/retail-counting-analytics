@@ -1,0 +1,43 @@
+{
+  "note": "Pexels clip 1338594 (1920x1080): a mall walkway seen from the side; a vertical line across the walkway counts people passing. in = ending on the left (Watsons side). Hysteresis 40 px because people pause at the line; the mirrored pillar on the right is an ignore zone.",
+  "space": "image",
+  "margin": 40,
+  "anchor": "bottom_center",
+  "lines": [
+    {
+      "name": "walkway",
+      "a": [
+        1000,
+        300
+      ],
+      "b": [
+        1000,
+        980
+      ]
+    }
+  ],
+  "zones": [],
+  "ignore_zones": [
+    {
+      "name": "pillar_reflection",
+      "polygon": [
+        [
+          1090,
+          250
+        ],
+        [
+          1300,
+          250
+        ],
+        [
+          1300,
+          1080
+        ],
+        [
+          1090,
+          1080
+        ]
+      ]
+    }
+  ]
+}

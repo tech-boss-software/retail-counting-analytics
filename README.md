@@ -7,7 +7,7 @@
 
 Runs on-premise with no cloud account; the only model input is an ONNX file.
 
-**This is an engineering demonstration on synthetic fixtures.** Shelf photos and the entrance clip are drawn by `synthetic.py` so that every product, empty slot, floor position and gate crossing is known exactly and the numbers can be scored. The demo detector was trained by the sibling [detector-training-pipeline](../detector-training-pipeline) on the same kind of drawings; on real shelves and cameras the client's labelled photos replace it through the same ONNX contract. Public shelf datasets such as SKU-110K carry research-only licences and were not used.
+**Measured on synthetic fixtures, with one real-footage check.** Shelf photos and the entrance clip are drawn by `synthetic.py` so that every product, empty slot, floor position and gate crossing is known exactly and the numbers can be scored. A hand-held mall clip (Pexels, free licence) was counted with the official COCO person detector to show the pipeline on real video and what the hysteresis and ignore-zone guards do; the model card reports it with its caveats. Public shelf datasets such as SKU-110K carry research-only licences and were not used, so shelf mode has no real-photo number yet.
 
 ## Quick start
 
@@ -31,6 +31,14 @@ python count_flow.py --input artifacts/clip/clip.mp4 --config artifacts/clip/con
 
 Open `artifacts/shelf-run/dashboard.html` and `artifacts/flow-run/dashboard.html`.
 
+## Real footage
+
+```sh
+python count_flow.py --input mall_rush_pexels_1338594.mp4 --config config/mall_pexels_1338594.json --detector torchvision-person-frcnn:640 --bucket 4 --output artifacts/flow-real --snapshots 40,120,200
+```
+
+`config/mall_pexels_1338594.json` is a pixel-space config with a 40 px hysteresis and an `ignore_zones` polygon over a mirrored pillar; the run is in `examples/flow-real/`.
+
 ## Your photos, your cameras
 
 ```sh
@@ -41,12 +49,13 @@ python count_flow.py --input entrance.mp4 --config my-store.json --detector torc
 
 **Shelf mode** needs a detector with a `product` class. Rows are found by clustering box bottoms (products stand on the shelf), and inside a row a gap wider than `--min-gap-ratio` (0.8) times the row's median product width is an empty slot; a gap that would hold several products is reported as several slots. `--extent left,right` fixes the shelf edges in pixels for a fixed camera; by default the span of detected products is used, which cannot see an empty slot at a row end unless another row reaches there.
 
-**Flow mode** needs a detector with a `person` class: an ONNX model from detector-training-pipeline, or `torchvision-person`, the official COCO-pretrained SSDLite320 MobileNetV3 restricted to people, which needs no training on real footage. The config JSON holds:
+**Flow mode** needs a detector with a `person` class: an ONNX model from detector-training-pipeline, `torchvision-person` (the official COCO SSDLite320 MobileNetV3, fast) or `torchvision-person-frcnn[:size]` (the official COCO Faster R-CNN MobileNetV3 with an adjustable resize, better for small or distant people); neither needs training on real footage. The config JSON holds:
 
 - `floor` (optional): `image_points` and `floor_points`, four or more pixel positions paired with their measured floor coordinates in metres. With `"space": "floor"`, lines and zones are in metres and zone reports include people per square metre; with `"space": "image"` everything is in pixels (`config/entrance_pixels.json`).
 - `lines`: directed segments `a -> b`. A track is counted `in` when it crosses to the side where `(b - a) x (p - a)` is positive: with y up (floor metres) the left of `a -> b`, with y down (pixels) the right. Rule of thumb for a floor plan: walk from `a` to `b` with the inside of the store on your left. Swap the endpoints to flip.
 - `margin`: hysteresis distance (0.3 m in the demo, 8 px in pixel space). A track's side only changes once it is at least this far from the line, and the path between the last confirmed position and the current one must cross the segment itself. A person stopping on the threshold does not count twice, and walking around the end of a gate does not count at all.
 - `zones`: polygons for occupancy; peak, mean and occupied-time fraction are reported, plus density when the space is metric. Parking bays and queue areas are the same mechanism.
+- `ignore_zones`: polygons where tracks are dropped before counting (mirrors, screens, a staff door).
 - `--bucket` seconds for the totals table (3600 by default) and `--start-time` to stamp buckets and crossings with wall-clock time; occupancy per bucket is the running in-minus-out from the start of the recording.
 
 ## How it works
@@ -70,6 +79,8 @@ Geometry, homography, counting, shelf logic, synthetic truth and the stores are 
 ![Shelf audit: boxes, per-row counts and hatched empty slots](examples/shelf/annotated/shelf_003.png)
 
 ![Entrance frame with the gate line, zone and tracked people](examples/flow/frame_0290.png)
+
+![Real mall clip: people tracked across the counting line, mirrored pillar ignored](examples/flow-real/frame_0120.jpg)
 
 ## Limitations
 

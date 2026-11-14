@@ -102,10 +102,14 @@ class OccupancyTests(unittest.TestCase):
             bucket_totals(crossings, fps=0, bucket_seconds=1)
 
     def test_config_validation(self):
-        good = load_config({"lines": [GATE], "zones": [{"name": "z", "polygon": [[0, 0], [1, 0], [1, 1]]}]})
+        good = load_config({"lines": [GATE], "zones": [{"name": "z", "polygon": [[0, 0], [1, 0], [1, 1]]}],
+                            "ignore_zones": [{"polygon": [[50, 50], [60, 50], [60, 60], [50, 60]]}]})
         self.assertEqual(good["space"], "image")
+        from counting import ignored
+        self.assertTrue(ignored((55, 55), good["ignore_zones"]))
+        self.assertFalse(ignored((5, 5), good["ignore_zones"]))
         for bad in ({"space": "metres"}, {"space": "floor"}, {"lines": [GATE, GATE]}, {"lines": [{"name": "x", "a": [0, 0], "b": [0, 0]}]},
-                    {"margin": -1}, {"zones": [{"name": "z", "polygon": [[0, 0], [1, 1]]}]}):
+                    {"margin": -1}, {"zones": [{"name": "z", "polygon": [[0, 0], [1, 1]]}]}, {"ignore_zones": [{"polygon": [[0, 0]]}]}):
             with self.assertRaises(ValueError):
                 load_config(bad)
 

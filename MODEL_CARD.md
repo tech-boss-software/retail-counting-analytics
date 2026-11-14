@@ -40,6 +40,17 @@ All 37 slots the logic-only run misses are at the right end of a row, where noth
 
 Net count error 0; the occupancy curve (in minus out) matches the truth on 94% of frames, the rest being the hysteresis delay of under a second after each crossing. The two decoys produced no count. The promo zone (5 m²) was occupied 66% of the time with a peak of one person, as scripted. The tracker opened 12 identities for 10 walkers: two re-identifications after a walker left and re-entered the view, none of them at the gate, so no double count. Per-bucket totals are in `examples/flow/totals.csv`. The 320-px detector gave the same 7/7 result on this clip (people are 57 to 150 px tall here); the committed run uses the 512-px model so both modes share one file. Median detector time 70 ms and 74 ms per frame end to end (detect, track, count, overlay, encode) on 4 threads; 46 s for the 60-second clip.
 
+## Real footage: a mall walkway (Pexels 1338594)
+
+An 8-second hand-held clip of a busy mall walkway (1920x1080, 30 fps, free Pexels licence; source in `examples/FOOTAGE_SOURCES.md`), counted across a vertical line drawn across the walkway in pixel space with the official COCO Faster R-CNN person backend at a 640 px resize. No floor calibration is possible (the camera moves), so this is a pixel-space count only.
+
+| Setting | Result |
+|---|---|
+| First attempt: 12 px hysteresis, no ignore zone | 13 crossings (3 in, 10 out) from 66 tracks: people pausing on the line were counted back and forth, and a mirrored pillar produced a phantom track |
+| Shipped settings: 40 px hysteresis, the pillar as an ignore zone | 5 crossings (1 in, 4 out) from 65 tracks; by eye, four to five people walk past the line to the right during the clip, and the single `in` is one person stepping back at the line |
+
+Cost: 0.42 s per 1080p frame on 4 CPU threads. The clip shows what the synthetic entrance could not: a hand-held camera, a crowd with children partly hidden behind adults, and reflections. It is a check that the pipeline runs on real video and that the two guards (hysteresis, ignore zones) matter; a counting accuracy claim needs a fixed camera over a doorway with a hand count, which is the first thing to record at a client site.
+
 ## What was not measured
 
 - Any photograph or real footage. Real shelves have overlapping, leaning and rotated products, glare, shadows, price-tag clutter and depth stacking; real people occlude each other, carry bags and trolleys, and walk in groups that a tracker can merge.

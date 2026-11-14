@@ -1,0 +1,90 @@
+{
+  "source": "video mall_rush_pexels_1338594.mp4",
+  "frames": 240,
+  "fps": 29.97002997002997,
+  "size": [
+    1920,
+    1080
+  ],
+  "detector": {
+    "backend": "torchvision-person-frcnn",
+    "weights": "FasterRCNN_MobileNet_V3_Large_320_FPN_Weights.COCO_V1",
+    "url": "https://download.pytorch.org/models/fasterrcnn_mobilenet_v3_large_320_fpn-907ea3f9.pth",
+    "min_size": 640,
+    "classes": {
+      "0": "person"
+    },
+    "torchvision": "0.29.2+cpu"
+  },
+  "config": {
+    "anchor": "bottom_center",
+    "space": "image",
+    "margin": 40,
+    "lines": [
+      {
+        "name": "walkway",
+        "a": [
+          1000,
+          300
+        ],
+        "b": [
+          1000,
+          980
+        ]
+      }
+    ],
+    "zones": [],
+    "ignore_zones": [
+      {
+        "name": "pillar_reflection",
+        "polygon": [
+          [
+            1090,
+            250
+          ],
+          [
+            1300,
+            250
+          ],
+          [
+            1300,
+            1080
+          ],
+          [
+            1090,
+            1080
+          ]
+        ]
+      }
+    ],
+    "floor": null,
+    "note": "Pexels clip 1338594 (1920x1080): a mall walkway seen from the side; a vertical line across the walkway counts people passing. in = ending on the left (Watsons side). Hysteresis 40 px because people pause at the line; the mirrored pillar on the right is an ignore zone."
+  },
+  "floor_residual_px": null,
+  "tracker": {
+    "high_score": 0.5,
+    "low_score": 0.1,
+    "iou_threshold": 0.3,
+    "min_hits": 3,
+    "max_lost": 10
+  },
+  "bucket_seconds": 4.0,
+  "start_time": null,
+  "totals": {
+    "walkway": {
+      "in": 1,
+      "out": 4
+    }
+  },
+  "zones": {},
+  "crossings": 5,
+  "tracks_seen": 65,
+  "timing": {
+    "detector_median_ms": 416.6699500019604,
+    "frame_median_ms": 456.5756500014686,
+    "wall_seconds": 113.92418400000315,
+    "threads": 4,
+    "cpu": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "annotated_video": "annotated.mp4"
+}

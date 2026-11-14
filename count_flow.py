@@ -8,7 +8,7 @@ import statistics
 import time
 from pathlib import Path
 
-from counting import LineCounter, ZoneOccupancy, bucket_totals, load_config
+from counting import LineCounter, ZoneOccupancy, bucket_totals, ignored, load_config
 from detectors import load_detector
 from evaluate_flow import evaluate
 from frames import VideoSink, open_source
@@ -63,13 +63,19 @@ def main(argv=None):
         t1 = time.perf_counter()
         tracks = tracker.update([d for d in detections if d["class_id"] == person_class], frame_index)
         anchors, points = {}, {}
+        kept = []
         for track in tracks:
             anchor = box_anchor(track["box_xyxy"], config["anchor"])
+            point = plane.floor(anchor) if plane else anchor
+            if ignored(point, config["ignore_zones"]):
+                continue
+            kept.append(track)
             anchors[track["track_id"]] = anchor
-            points[track["track_id"]] = plane.floor(anchor) if plane else anchor
+            points[track["track_id"]] = point
             trails.setdefault(track["track_id"], []).append(anchor)
             floor_trails.setdefault(track["track_id"], []).append(points[track["track_id"]])
             last_seen[track["track_id"]] = frame_index
+        tracks = kept
         counter.update(points, frame_index)
         zone_counts = zones.update(points, frame_index)
         stale = [tid for tid, seen in last_seen.items() if frame_index - seen > 100]

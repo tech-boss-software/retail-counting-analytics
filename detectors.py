@@ -93,9 +93,43 @@ class TorchvisionPersonDetector:
                 "classes": self.labels, "torchvision": torchvision.__version__}
 
 
+class TorchvisionPersonFRCNN(TorchvisionPersonDetector):
+    """The official COCO Faster R-CNN MobileNetV3-Large 320 FPN, people only, with an adjustable internal resize.
+
+    Slower than SSDLite but it keeps small, distant people (players on a pitch at 720p) that the
+    320-px SSDLite loses; `min_size` is the shorter side after the internal resize.
+    """
+
+    def __init__(self, threads=4, cache_dir=None, score_threshold=0.05, min_size=640):
+        if cache_dir:
+            os.environ["TORCH_HOME"] = str(Path(cache_dir).resolve())
+        import torch
+        import torchvision
+        from torchvision.models.detection import FasterRCNN_MobileNet_V3_Large_320_FPN_Weights
+
+        torch.set_num_threads(int(threads))
+        self.weights = FasterRCNN_MobileNet_V3_Large_320_FPN_Weights.COCO_V1
+        self.model = torchvision.models.detection.fasterrcnn_mobilenet_v3_large_320_fpn(weights=self.weights).eval()
+        self.model.transform.min_size = (int(min_size),)
+        self.model.transform.max_size = int(min_size) * 2
+        self.person_index = self.weights.meta["categories"].index("person")
+        self.labels = {0: "person"}
+        self.score_threshold = score_threshold
+        self.torch = torch
+
+    def info(self):
+        import torchvision
+
+        return {"backend": "torchvision-person-frcnn", "weights": str(self.weights), "url": self.weights.url, "min_size": self.model.transform.min_size[0],
+                "classes": self.labels, "torchvision": torchvision.__version__}
+
+
 def load_detector(spec, threads=4, cache_dir=None):
     if spec.startswith("onnx:"):
         return OnnxDetector(spec[5:], threads)
     if spec == "torchvision-person":
         return TorchvisionPersonDetector(threads, cache_dir)
-    raise ValueError("detector must be 'onnx:<model.onnx>' or 'torchvision-person'")
+    if spec.startswith("torchvision-person-frcnn"):
+        size = int(spec.split(":", 1)[1]) if ":" in spec else 640
+        return TorchvisionPersonFRCNN(threads, cache_dir, min_size=size)
+    raise ValueError("detector must be 'onnx:<model.onnx>', 'torchvision-person' or 'torchvision-person-frcnn[:min_size]'")
