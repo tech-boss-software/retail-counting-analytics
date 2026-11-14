@@ -1,0 +1,41 @@
+{
+  "space": "image",
+  "margin": 8,
+  "anchor": "bottom_center",
+  "lines": [
+    {
+      "name": "entrance",
+      "a": [
+        115,
+        233
+      ],
+      "b": [
+        365,
+        233
+      ]
+    }
+  ],
+  "zones": [
+    {
+      "name": "promo_stand",
+      "polygon": [
+        [
+          266,
+          202
+        ],
+        [
+          371,
+          202
+        ],
+        [
+          334,
+          156
+        ],
+        [
+          259,
+          156
+        ]
+      ]
+    }
+  ]
+}

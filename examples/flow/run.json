@@ -1,0 +1,168 @@
+{
+  "source": "video clip.mp4",
+  "frames": 600,
+  "fps": 10.0,
+  "size": [
+    480,
+    360
+  ],
+  "detector": {
+    "backend": "onnx",
+    "model": "artifacts\\model-512\\model.onnx",
+    "sha256": "c498411a292e1a3b9d9a7070e4e9310ad5d7c3f9fbf6a39f312e4206fd9dcdce",
+    "classes": {
+      "0": "person",
+      "1": "product"
+    },
+    "onnxruntime": "1.32.0"
+  },
+  "config": {
+    "anchor": "bottom_center",
+    "space": "floor",
+    "margin": 0.3,
+    "lines": [
+      {
+        "name": "entrance",
+        "a": [
+          5.0,
+          3.0
+        ],
+        "b": [
+          1.0,
+          3.0
+        ]
+      }
+    ],
+    "zones": [
+      {
+        "name": "promo_stand",
+        "polygon": [
+          [
+            3.5,
+            4.0
+          ],
+          [
+            5.5,
+            4.0
+          ],
+          [
+            5.5,
+            6.5
+          ],
+          [
+            3.5,
+            6.5
+          ]
+        ]
+      }
+    ],
+    "floor": {
+      "units": "m",
+      "floor_points": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          5.0,
+          1.0
+        ],
+        [
+          5.0,
+          8.0
+        ],
+        [
+          1.0,
+          8.0
+        ]
+      ],
+      "image_points": [
+        [
+          39.729,
+          349.472
+        ],
+        [
+          440.271,
+          349.472
+        ],
+        [
+          304.239,
+          139.34
+        ],
+        [
+          175.761,
+          139.34
+        ]
+      ]
+    }
+  },
+  "floor_residual_px": 0.0,
+  "tracker": {
+    "high_score": 0.5,
+    "low_score": 0.1,
+    "iou_threshold": 0.3,
+    "min_hits": 3,
+    "max_lost": 10
+  },
+  "bucket_seconds": 10.0,
+  "start_time": "2026-11-14T09:00:00",
+  "totals": {
+    "entrance": {
+      "in": 4,
+      "out": 3
+    }
+  },
+  "zones": {
+    "promo_stand": {
+      "frames": 600,
+      "peak": 1,
+      "mean": 0.6633333333333333,
+      "occupied_fraction": 0.6633333333333333,
+      "area_m2": 5.0,
+      "peak_density_per_m2": 0.2
+    }
+  },
+  "crossings": 7,
+  "tracks_seen": 12,
+  "timing": {
+    "detector_median_ms": 70.08170010522008,
+    "frame_median_ms": 74.47340001817793,
+    "wall_seconds": 45.95519939996302,
+    "threads": 4,
+    "cpu": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "annotated_video": "annotated.mp4",
+  "evaluation": {
+    "tolerance_frames": 15,
+    "truth": 7,
+    "predicted": 7,
+    "true_positive": 7,
+    "false_positive": 0,
+    "false_negative": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "median_latency_frames": 6,
+    "max_abs_latency_frames": 7,
+    "per_direction": {
+      "in": {
+        "truth": 4,
+        "predicted": 4,
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "count_error": 0
+      },
+      "out": {
+        "truth": 3,
+        "predicted": 3,
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 0,
+        "count_error": 0
+      }
+    },
+    "net_count_error": 0,
+    "occupancy_mean_abs_error": 0.07166666666666667,
+    "occupancy_frames_exact": 0.9383333333333334
+  }
+}

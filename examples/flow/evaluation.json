@@ -1,0 +1,198 @@
+{
+  "tolerance_frames": 15,
+  "truth": 7,
+  "predicted": 7,
+  "true_positive": 7,
+  "false_positive": 0,
+  "false_negative": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "median_latency_frames": 6,
+  "max_abs_latency_frames": 7,
+  "per_direction": {
+    "in": {
+      "truth": 4,
+      "predicted": 4,
+      "true_positive": 4,
+      "false_positive": 0,
+      "false_negative": 0,
+      "count_error": 0
+    },
+    "out": {
+      "truth": 3,
+      "predicted": 3,
+      "true_positive": 3,
+      "false_positive": 0,
+      "false_negative": 0,
+      "count_error": 0
+    }
+  },
+  "net_count_error": 0,
+  "occupancy_mean_abs_error": 0.07166666666666667,
+  "occupancy_frames_exact": 0.9383333333333334,
+  "matches": [
+    {
+      "predicted": {
+        "frame": 528,
+        "track_id": 12,
+        "line": "entrance",
+        "direction": "out",
+        "point": [
+          1.16,
+          3.333
+        ]
+      },
+      "truth": {
+        "frame": 523,
+        "track_id": 10,
+        "line": "entrance",
+        "direction": "out",
+        "point": [
+          1.149,
+          3.0
+        ]
+      },
+      "latency_frames": 5
+    },
+    {
+      "predicted": {
+        "frame": 552,
+        "track_id": 11,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          2.947,
+          2.678
+        ]
+      },
+      "truth": {
+        "frame": 547,
+        "track_id": 9,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          2.949,
+          3.0
+        ]
+      },
+      "latency_frames": 5
+    },
+    {
+      "predicted": {
+        "frame": 294,
+        "track_id": 3,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          1.455,
+          2.671
+        ]
+      },
+      "truth": {
+        "frame": 288,
+        "track_id": 4,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          1.453,
+          3.0
+        ]
+      },
+      "latency_frames": 6
+    },
+    {
+      "predicted": {
+        "frame": 294,
+        "track_id": 6,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          2.568,
+          2.624
+        ]
+      },
+      "truth": {
+        "frame": 288,
+        "track_id": 5,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          2.547,
+          3.0
+        ]
+      },
+      "latency_frames": 6
+    },
+    {
+      "predicted": {
+        "frame": 67,
+        "track_id": 2,
+        "line": "entrance",
+        "direction": "out",
+        "point": [
+          3.843,
+          3.337
+        ]
+      },
+      "truth": {
+        "frame": 60,
+        "track_id": 2,
+        "line": "entrance",
+        "direction": "out",
+        "point": [
+          3.885,
+          3.0
+        ]
+      },
+      "latency_frames": 7
+    },
+    {
+      "predicted": {
+        "frame": 95,
+        "track_id": 1,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          2.61,
+          2.612
+        ]
+      },
+      "truth": {
+        "frame": 88,
+        "track_id": 1,
+        "line": "entrance",
+        "direction": "in",
+        "point": [
+          2.632,
+          3.0
+        ]
+      },
+      "latency_frames": 7
+    },
+    {
+      "predicted": {
+        "frame": 460,
+        "track_id": 10,
+        "line": "entrance",
+        "direction": "out",
+        "point": [
+          3.271,
+          3.307
+        ]
+      },
+      "truth": {
+        "frame": 453,
+        "track_id": 8,
+        "line": "entrance",
+        "direction": "out",
+        "point": [
+          3.251,
+          3.0
+        ]
+      },
+      "latency_frames": 7
+    }
+  ],
+  "unmatched_predicted": [],
+  "unmatched_truth": []
+}

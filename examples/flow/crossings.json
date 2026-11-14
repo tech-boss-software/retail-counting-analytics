@@ -1,0 +1,72 @@
+[
+  {
+    "frame": 67,
+    "track_id": 2,
+    "line": "entrance",
+    "direction": "out",
+    "point": [
+      3.843,
+      3.337
+    ]
+  },
+  {
+    "frame": 95,
+    "track_id": 1,
+    "line": "entrance",
+    "direction": "in",
+    "point": [
+      2.61,
+      2.612
+    ]
+  },
+  {
+    "frame": 294,
+    "track_id": 3,
+    "line": "entrance",
+    "direction": "in",
+    "point": [
+      1.455,
+      2.671
+    ]
+  },
+  {
+    "frame": 294,
+    "track_id": 6,
+    "line": "entrance",
+    "direction": "in",
+    "point": [
+      2.568,
+      2.624
+    ]
+  },
+  {
+    "frame": 460,
+    "track_id": 10,
+    "line": "entrance",
+    "direction": "out",
+    "point": [
+      3.271,
+      3.307
+    ]
+  },
+  {
+    "frame": 528,
+    "track_id": 12,
+    "line": "entrance",
+    "direction": "out",
+    "point": [
+      1.16,
+      3.333
+    ]
+  },
+  {
+    "frame": 552,
+    "track_id": 11,
+    "line": "entrance",
+    "direction": "in",
+    "point": [
+      2.947,
+      2.678
+    ]
+  }
+]

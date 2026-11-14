@@ -1,0 +1,13 @@
+services:
+  flow:
+    build: .
+    volumes:
+      - ./data:/data:ro
+      - ./output/flow:/output
+    command: ["count_flow.py", "--input", "/data/clip.mp4", "--config", "/data/config.json", "--detector", "onnx:/data/model.onnx", "--output", "/output", "--threads", "4"]
+  shelf:
+    build: .
+    volumes:
+      - ./data:/data:ro
+      - ./output/shelf:/output
+    command: ["audit_shelf.py", "--input", "/data/shelves", "--detector", "onnx:/data/model.onnx", "--output", "/output", "--threads", "4"]

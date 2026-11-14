@@ -1,0 +1,18 @@
+{
+  "root": "artifacts\\dataset",
+  "classes": [
+    "person",
+    "product"
+  ],
+  "images": 400,
+  "negative_images": 0,
+  "objects": 6706,
+  "objects_per_class": {
+    "person": 544,
+    "product": 6162
+  },
+  "problems": [],
+  "orphan_labels": [],
+  "fingerprint": "047b6a925092bb60fd6eee54d1306ce739c099057d5b58c6ab3e32b9f5e8d1e2",
+  "origin": "operator-supplied dataset at artifacts\\dataset"
+}
